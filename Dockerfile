@@ -29,7 +29,7 @@ RUN apt-get install xdg-utils -y
 RUN apt-get install libgbm1 -y
 RUN apt-get install sshfs -y
 RUN dpkg -i google-chrome-stable_current_amd64.deb
-RUN wget https://chromedriver.storage.googleapis.com/90.0.4430.24/chromedriver_linux64.zip
+RUN wget https://chromedriver.storage.googleapis.com/91.0.4472.19/chromedriver_linux64.zip
 RUN apt-get install unzip -y
 RUN unzip chromedriver_linux64.zip
 RUN ln -s /chromedriver /usr/bin/chromedriver
@@ -66,10 +66,10 @@ RUN cd demo && mvn clean install
 
 RUN apt-get update && apt-get install -y vim && apt-get install -y libgtk2.0-0 libcanberra-gtk-module
 RUN echo 'Installing Intellij'
-RUN wget https://download.jetbrains.com/idea/ideaIU-2020.3.3-no-jbr.tar.gz
-RUN tar -xf ideaIU-2020.3.3-no-jbr.tar.gz -C /opt
-RUN rm ideaIU-2020.3.3-no-jbr.tar.gz
-ADD .IntelliJIdea2016.1 /root/.IntelliJIdea2016.1
+RUN wget https://download.jetbrains.com/idea/ideaIU-2021.1.1-no-jbr.tar.gz
+RUN tar -xf ideaIU-2021.1.1-no-jbr.tar.gz -C /opt
+RUN rm ideaIU-2021.1.1-no-jbr.tar.gz
+ADD IntelliJIdea2020.3 /root/.config/JetBrains/IntelliJIdea2020.3
 RUN sed -i 's/Xms128m/Xms4096m/g' /opt/$(ls /opt | grep idea)/bin/idea64.vmoptions
 RUN sed -i 's/Xmx750m/Xmx4096m/g' /opt/$(ls /opt | grep idea)/bin/idea64.vmoptions
 RUN sed -i 's/.*UseConcMarkSweepGC//g' /opt/$(ls /opt | grep idea)/bin/idea64.vmoptions
