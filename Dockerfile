@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:21.04
 
 RUN apt-get update
 RUN apt-get install \
@@ -45,12 +45,12 @@ RUN apt-get install -y curl
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - 
 RUN apt-get install -y nodejs
 
-RUN wget https://download.java.net/java/GA/jdk16/7863447f0ab643c585b9bdebf67c69db/36/GPL/openjdk-16_linux-x64_bin.tar.gz
+RUN wget https://download.java.net/openjdk/jdk16/ri/openjdk-16+36_linux-x64_bin.tar.gz
 RUN mkdir /usr/share/java
-RUN tar -xzf openjdk-16_linux-x64_bin.tar.gz -C /usr/share/java
+RUN tar -xzf openjdk-16+36_linux-x64_bin.tar.gz -C /usr/share/java
 ENV JAVA_HOME /usr/share/java/jdk-16
 RUN ln -s /usr/share/java/jdk-16/bin/java /usr/bin/java
-RUN rm openjdk-16_linux-x64_bin.tar.gz
+RUN rm openjdk-16+36_linux-x64_bin.tar.gz
 RUN java -version
 
 ARG MAVEN_VERSION=3.6.3
@@ -66,9 +66,9 @@ RUN cd demo && mvn clean install
 
 RUN apt-get update && apt-get install -y vim && apt-get install -y libgtk2.0-0 libcanberra-gtk-module
 RUN echo 'Installing Intellij'
-RUN wget https://download.jetbrains.com/idea/ideaIU-2021.1.1-no-jbr.tar.gz
-RUN tar -xf ideaIU-2021.1.1-no-jbr.tar.gz -C /opt
-RUN rm ideaIU-2021.1.1-no-jbr.tar.gz
+RUN wget https://download.jetbrains.com/idea/ideaIU-2021.1.1.tar.gz
+RUN tar -xf ideaIU-2021.1.1.tar.gz -C /opt
+RUN rm ideaIU-2021.1.1.tar.gz
 ADD IntelliJIdea2020.3 /root/.config/JetBrains/IntelliJIdea2020.3
 RUN sed -i 's/Xms128m/Xms4096m/g' /opt/$(ls /opt | grep idea)/bin/idea64.vmoptions
 RUN sed -i 's/Xmx750m/Xmx4096m/g' /opt/$(ls /opt | grep idea)/bin/idea64.vmoptions
