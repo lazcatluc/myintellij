@@ -29,7 +29,7 @@ RUN apt-get install xdg-utils -y
 RUN apt-get install libgbm1 -y
 RUN apt-get install sshfs -y
 RUN dpkg -i google-chrome-stable_current_amd64.deb
-RUN wget https://chromedriver.storage.googleapis.com/91.0.4472.19/chromedriver_linux64.zip
+RUN wget https://chromedriver.storage.googleapis.com/92.0.4515.43/chromedriver_linux64.zip
 RUN apt-get install unzip -y
 RUN unzip chromedriver_linux64.zip
 RUN ln -s /chromedriver /usr/bin/chromedriver
@@ -40,6 +40,7 @@ RUN apt-get install git-lfs -y
 RUN git config --global user.name "Catalin Lazar"
 RUN git config --global user.email "lazcatluc@gmail.com"
 RUN git config --global push.default simple
+RUN git config --global pull.rebase false
 
 RUN apt-get install -y curl
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - 
@@ -66,9 +67,9 @@ RUN cd demo && mvn clean install
 
 RUN apt-get update && apt-get install -y vim && apt-get install -y libgtk2.0-0 libcanberra-gtk-module
 RUN echo 'Installing Intellij'
-RUN wget https://download.jetbrains.com/idea/ideaIU-2021.1.1.tar.gz
-RUN tar -xf ideaIU-2021.1.1.tar.gz -C /opt
-RUN rm ideaIU-2021.1.1.tar.gz
+RUN wget https://download.jetbrains.com/idea/ideaIU-2021.2.tar.gz
+RUN tar -xf ideaIU-2021.2.tar.gz -C /opt
+RUN rm ideaIU-2021.2.tar.gz
 ADD IntelliJIdea2020.3 /root/.config/JetBrains/IntelliJIdea2020.3
 RUN sed -i 's/Xms128m/Xms4096m/g' /opt/$(ls /opt | grep idea)/bin/idea64.vmoptions
 RUN sed -i 's/Xmx750m/Xmx4096m/g' /opt/$(ls /opt | grep idea)/bin/idea64.vmoptions
