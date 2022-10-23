@@ -1,4 +1,4 @@
-FROM ubuntu:21.04
+FROM ubuntu:22.04
 
 RUN apt-get update
 RUN apt-get install \
@@ -7,6 +7,8 @@ RUN apt-get install \
     ca-certificates \
     curl \
     gnupg-agent \
+	lsof \
+	openssh-server \
     software-properties-common -y
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -	
 RUN add-apt-repository \
@@ -28,8 +30,9 @@ RUN apt-get install libxss1 -y
 RUN apt-get install xdg-utils -y
 RUN apt-get install libgbm1 -y
 RUN apt-get install sshfs -y
+RUN apt-get install libasound2 -y
 RUN dpkg -i google-chrome-stable_current_amd64.deb
-RUN wget https://chromedriver.storage.googleapis.com/92.0.4515.43/chromedriver_linux64.zip
+RUN wget https://chromedriver.storage.googleapis.com/106.0.5249.61/chromedriver_linux64.zip
 RUN apt-get install unzip -y
 RUN unzip chromedriver_linux64.zip
 RUN ln -s /chromedriver /usr/bin/chromedriver
@@ -43,18 +46,18 @@ RUN git config --global push.default simple
 RUN git config --global pull.rebase false
 
 RUN apt-get install -y curl
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - 
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - 
 RUN apt-get install -y nodejs
 
-RUN wget https://download.java.net/openjdk/jdk16/ri/openjdk-16+36_linux-x64_bin.tar.gz
+RUN wget https://download.java.net/openjdk/jdk17/ri/openjdk-17+35_linux-x64_bin.tar.gz
 RUN mkdir /usr/share/java
-RUN tar -xzf openjdk-16+36_linux-x64_bin.tar.gz -C /usr/share/java
-ENV JAVA_HOME /usr/share/java/jdk-16
-RUN ln -s /usr/share/java/jdk-16/bin/java /usr/bin/java
-RUN rm openjdk-16+36_linux-x64_bin.tar.gz
+RUN tar -xzf openjdk-17+35_linux-x64_bin.tar.gz -C /usr/share/java
+ENV JAVA_HOME /usr/share/java/jdk-17
+RUN ln -s /usr/share/java/jdk-17/bin/java /usr/bin/java
+RUN rm openjdk-17+35_linux-x64_bin.tar.gz
 RUN java -version
 
-ARG MAVEN_VERSION=3.6.3
+ARG MAVEN_VERSION=3.8.5
 ARG USER_HOME_DIR="/root"
 ARG BASE_URL=https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/
 RUN mkdir -p /usr/share/maven /usr/share/maven/ref \
@@ -62,18 +65,18 @@ RUN mkdir -p /usr/share/maven /usr/share/maven/ref \
   && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1 \
   && rm -f /tmp/apache-maven.tar.gz \
   && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+RUN mvn -version
 ADD demo/ /demo/
 RUN cd demo && mvn clean install
 
 RUN apt-get update && apt-get install -y vim && apt-get install -y libgtk2.0-0 libcanberra-gtk-module
 RUN echo 'Installing Intellij'
-RUN wget https://download.jetbrains.com/idea/ideaIU-2021.2.tar.gz
-RUN tar -xf ideaIU-2021.2.tar.gz -C /opt
-RUN rm ideaIU-2021.2.tar.gz
+RUN wget https://download-cdn.jetbrains.com/idea/ideaIU-2022.2.3.tar.gz
+RUN tar -xf ideaIU-2022.2.3.tar.gz -C /opt
+RUN rm ideaIU-2022.2.3.tar.gz
 ADD IntelliJIdea2020.3 /root/.config/JetBrains/IntelliJIdea2020.3
-RUN sed -i 's/Xms128m/Xms4096m/g' /opt/$(ls /opt | grep idea)/bin/idea64.vmoptions
-RUN sed -i 's/Xmx750m/Xmx4096m/g' /opt/$(ls /opt | grep idea)/bin/idea64.vmoptions
-RUN sed -i 's/.*UseConcMarkSweepGC//g' /opt/$(ls /opt | grep idea)/bin/idea64.vmoptions
+RUN sed -i 's/Xms128m/Xms8192m/g' /opt/$(ls /opt | grep idea)/bin/idea64.vmoptions
+RUN sed -i 's/Xmx750m/Xmx8192m/g' /opt/$(ls /opt | grep idea)/bin/idea64.vmoptions
 RUN cat /opt/$(ls /opt | grep idea)/bin/idea64.vmoptions
 ADD .ssh /root/.ssh
 RUN chmod 600 /root/.ssh/id_rsa
