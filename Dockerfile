@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:23.04
 
 RUN apt-get update
 RUN apt-get install \
@@ -31,8 +31,10 @@ RUN apt-get install xdg-utils -y
 RUN apt-get install libgbm1 -y
 RUN apt-get install sshfs -y
 RUN apt-get install libasound2 -y
+RUN apt-get install libu2f-udev -y
+RUN apt-get install libvulkan1 -y
 RUN dpkg -i google-chrome-stable_current_amd64.deb
-RUN wget https://chromedriver.storage.googleapis.com/106.0.5249.61/chromedriver_linux64.zip
+RUN wget https://chromedriver.storage.googleapis.com/113.0.5672.63/chromedriver_linux64.zip
 RUN apt-get install unzip -y
 RUN unzip chromedriver_linux64.zip
 RUN ln -s /chromedriver /usr/bin/chromedriver
@@ -46,18 +48,21 @@ RUN git config --global push.default simple
 RUN git config --global pull.rebase false
 
 RUN apt-get install -y curl
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - 
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - 
 RUN apt-get install -y nodejs
 
-RUN wget https://download.java.net/openjdk/jdk17/ri/openjdk-17+35_linux-x64_bin.tar.gz
+RUN wget https://download.oracle.com/java/20/latest/jdk-20_linux-x64_bin.tar.gz
 RUN mkdir /usr/share/java
-RUN tar -xzf openjdk-17+35_linux-x64_bin.tar.gz -C /usr/share/java
-ENV JAVA_HOME /usr/share/java/jdk-17
-RUN ln -s /usr/share/java/jdk-17/bin/java /usr/bin/java
-RUN rm openjdk-17+35_linux-x64_bin.tar.gz
+RUN tar -xzf jdk-20_linux-x64_bin.tar.gz -C /usr/share/java
+RUN ls /usr/share/java
+ENV JAVA_HOME /usr/share/java/jdk-20.0.1
+RUN ln -s /usr/share/java/jdk-20.0.1/bin/java /usr/bin/java
+RUN rm jdk-20_linux-x64_bin.tar.gz
 RUN java -version
+RUN echo "echo 'Setting testcontainers environment to localhost'" >> /root/.bashrc
+RUN echo "export TESTCONTAINERS_HOST_OVERRIDE=localhost" >> /root/.bashrc
 
-ARG MAVEN_VERSION=3.8.5
+ARG MAVEN_VERSION=3.9.2
 ARG USER_HOME_DIR="/root"
 ARG BASE_URL=https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/
 RUN mkdir -p /usr/share/maven /usr/share/maven/ref \
@@ -71,9 +76,9 @@ RUN cd demo && mvn clean install
 
 RUN apt-get update && apt-get install -y vim && apt-get install -y libgtk2.0-0 libcanberra-gtk-module
 RUN echo 'Installing Intellij'
-RUN wget https://download-cdn.jetbrains.com/idea/ideaIU-2022.2.3.tar.gz
-RUN tar -xf ideaIU-2022.2.3.tar.gz -C /opt
-RUN rm ideaIU-2022.2.3.tar.gz
+RUN wget https://download.jetbrains.com/idea/ideaIU-2023.1.2.tar.gz
+RUN tar -xf ideaIU-2023.1.2.tar.gz -C /opt
+RUN rm ideaIU-2023.1.2.tar.gz
 ADD IntelliJIdea2020.3 /root/.config/JetBrains/IntelliJIdea2020.3
 RUN sed -i 's/Xms128m/Xms8192m/g' /opt/$(ls /opt | grep idea)/bin/idea64.vmoptions
 RUN sed -i 's/Xmx750m/Xmx8192m/g' /opt/$(ls /opt | grep idea)/bin/idea64.vmoptions
